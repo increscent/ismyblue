@@ -7,7 +7,8 @@
             <span class="background-white">Test <i>your</i> color categorization</span>
           </h1>
           <h1 v-else key="main" class="blue-green-test-title">
-            <span class="background-white">Is <i>my</i> blue <i>your</i> blue?</span>
+              <span class="background-white">Is <i>my</i> {{ HUE_NAMES.high }}
+                  <i>your</i> {{ HUE_NAMES.high }}?</span>
           </h1>
         </transition>
       </div>
@@ -47,7 +48,7 @@
       <div class="about-content">
         <h2>Whoops!</h2>
         <p>
-          The first color is always very green or very blue. If you mislabel the first color, you
+        The first color is always very green or very {{ HUE_NAMES.high }}. If you mislabel the first color, you
           won't get accurate thresholds. This might indicate you have an unusually calibrated
           screen, a night filter, or you made a mistake. Try again?
         </p>
@@ -55,7 +56,7 @@
       </div>
     </div>
     <div
-      v-if="rounds == MAX_ROUNDS && (allSame == 'blue' || allSame == 'green')"
+      v-if="rounds == MAX_ROUNDS && (allSame == HUE_NAMES.high || allSame == 'green')"
       class="about-popup"
     >
       <div class="about-content">
@@ -75,7 +76,8 @@
           People have different names for the colors they see.
           <a href="https://en.wikipedia.org/wiki/Sapir%E2%80%93Whorf_hypothesis" target="_blank"
             >Language can affect how we memorize and name colors</a
-          >. This is a color naming test designed to measure your personal blue-green boundary.
+        >. This is a color naming test designed to measure your personal {{
+        HUE_NAMES.high }}-green boundary.
         </p>
         <h2>Test validity</h2>
         <p>
@@ -107,7 +109,8 @@
         <h2>Technical Details</h2>
         <p>
           The test asks you to categorize colors sequentially. Colors are often represented in HSL
-          (hue, saturation, lightness) color space. Hue 120 is green, and hue 240 is blue. The test
+          (hue, saturation, lightness) color space. Hue 120 is green, and hue
+          {{ HUES.high }} is {{ HUE_NAMES.high }}. The test
           focuses on blue-green hues between 150 and 210. On the web, HSL coordinates are translated
           to
           <a href="https://en.wikipedia.org/wiki/SRGB">sRGB color space</a>, the standard color
@@ -170,7 +173,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { MAX_ROUNDS, BIN_POSITION, BIN_COUNT, X_CDF, Y_CDF } from '@/config' // Adjust the import path as needed
+import { HUES, HUE_NAMES, MAX_ROUNDS, BIN_POSITION, BIN_COUNT, X_CDF, Y_CDF } from '@/config' // Adjust the import path as needed
 </script>
 
 <script>
@@ -187,7 +190,7 @@ export default {
   },
   data() {
     return {
-      currentHue: Math.random() > 0.5 ? 150 : 210,
+      currentHue: Math.random() > 0.5 ? HUES.low : HUES.high,
       showInitialMessage: true,
       polarity: 0,
       rounds: 0,
@@ -206,10 +209,10 @@ export default {
   },
   computed: {
     rightButton() {
-      return this.greenButtonRight ? 'green' : 'blue'
+      return this.greenButtonRight ? HUE_NAMES.low : HUE_NAMES.high
     },
     leftButton() {
-      return this.greenButtonRight ? 'blue' : 'green'
+      return this.greenButtonRight ? HUE_NAMES.high : HUE_NAMES.low
     },
     currentColor() {
       return `hsl(${this.currentHue}, 100%, 50%)`
@@ -244,9 +247,9 @@ export default {
       this.responses.push({ hue: this.currentHue, response: color })
 
       if (this.rounds === 0) {
-        if (color === 'blue' && this.currentHue < 180) {
+        if (color === 'blue' && this.currentHue < HUES.mid) {
           this.firstColorMislabeled = true
-        } else if (color === 'green' && this.currentHue > 180) {
+        } else if (color === 'green' && this.currentHue > HUES.mid) {
           this.firstColorMislabeled = true
         }
         if (this.firstColorMislabeled) {
@@ -257,7 +260,7 @@ export default {
       // Get the new probe value
       const { b, newProbe, polarity } = fitSigmoid(
         this.responses.map((r) => r.hue),
-        this.responses.map((r) => r.response === 'blue'),
+        this.responses.map((r) => r.response === HUE_NAMES.high),
         this.polarity,
         0.4
       )
@@ -266,13 +269,13 @@ export default {
       this.rounds++
       if (this.rounds === MAX_ROUNDS) {
         if (
-          this.responses.every((r) => r.response === 'blue') ||
-          this.responses.every((r) => r.response === 'green')
+          this.responses.every((r) => r.response === HUE_NAMES.high) ||
+          this.responses.every((r) => r.response === HUE_NAMES.low)
         ) {
           this.allSame = this.responses[0].response
           return
         }
-        this.finalHue = 180 - b
+        this.finalHue = HUES.mid - b
         this.currentHue = this.finalHue
         this.showResults = true
         confetti()
@@ -283,9 +286,9 @@ export default {
       }, 200)
     },
     reset() {
-      let currentHue = Math.random() > 0.5 ? 150 : 210
+      let currentHue = Math.random() > 0.5 ? HUES.low : HUES.high
       if (this.firstColorMislabeled) {
-        currentHue = this.currentHue == 210 ? 150 : 210
+        currentHue = this.currentHue == HUES.high ? HUES.low : HUES.high
       }
 
       this.currentHue = currentHue

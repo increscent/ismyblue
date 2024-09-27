@@ -8,6 +8,10 @@ export const MAX_ROUNDS = 8 // 2^6, hence max resolution of 1.
 // Version 0.0.7 fixed the timestamp localization and moved the keys into a separate file.
 // Version 0.0.8 fixed the stability of the GLM fit, added noise to the probe color, and randomized the button order
 // it increased the number of rounds to 8 which in simulations led to better inferences.
+//export const HUES = {low: 30, mid: 45, high: 61};
+//export const HUE_NAMES = {low: 'orange', high: 'yellow'};
+export const HUES = {low: 310, mid: 335, high: 360};
+export const HUE_NAMES = {low: 'pink', high: 'red'};
 export const VERSION = '0.1.0'
 export const BIN_POSITION = [
   134.301141318471, 153.503134757856, 158.56843732322, 160.302303286645, 162.514185616824,

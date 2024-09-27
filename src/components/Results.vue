@@ -4,35 +4,41 @@
       <svg ref="svg" class="w-full h-96"></svg>
       <div class="absolute top-0 left-0 p-1">
         <div class="blue-green-test-result-color">
-          <p class="result-text bg-white bg-opacity-70 p-1 rounded"><i>Your</i> green</p>
+          <p class="result-text bg-white bg-opacity-70 p-1 rounded"><i>Your</i>
+          {{ HUE_NAMES.low }}</p>
         </div>
       </div>
       <div class="absolute top-0 right-0 p-1">
         <div class="blue-green-test-result-color">
-          <p class="result-text bg-white bg-opacity-70 p-1 rounded"><i>Your</i> blue</p>
+          <p class="result-text bg-white bg-opacity-70 p-1 rounded"><i>Your</i>
+          {{ HUE_NAMES.high }}</p>
         </div>
       </div>
     </div>
     <div class="blue-green-test-result-text w-full mt-0 bg-white">
       <p class="result-text">
         <i>Your</i> boundary is at hue {{ Math.round(userThreshold) }},
-        <span v-if="greenInclusive > 0.55">
+        <span v-if="false">
           bluer than {{ Math.round(greenInclusive * 100) }}% of the population. For <i>you</i>,
           turquoise
           <span class="color-chip mr-1"></span>
           is green.
         </span>
-        <span v-else-if="greenInclusive < 0.45">
+        <span v-else-if="false">
           greener than {{ Math.round((1 - greenInclusive) * 100) }}% of the population. For
           <i>you</i>, turquoise
           <span class="color-chip mr-1"></span>
           is blue.
         </span>
-        <span v-else> just like the population median. You're a true neutral. </span>
+        <span v-else></span>
       </p>
     </div>
   </div>
 </template>
+
+<script setup>
+import { HUES, HUE_NAMES } from '@/config'
+</script>
 
 <script>
 import * as d3 from 'd3'
@@ -73,8 +79,8 @@ export default {
       const innerWidth = width - margin.left - margin.right
       const innerHeight = height - margin.top - margin.bottom
 
-      let range_l = 155
-      let range_r = 205
+      let range_l = HUES.low
+      let range_r = HUES.high
       const x = d3.scaleLinear().domain([range_l, range_r]).range([0, innerWidth])
       const y = d3.scaleLinear().domain([0, 1]).range([innerHeight, 0])
 
